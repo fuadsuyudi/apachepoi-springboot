@@ -32,6 +32,7 @@ public class ReadingExcelService {
 
             iterator.next();
 
+            Integer row = 1;
             while (iterator.hasNext()) {
 
                 Row currentRow = iterator.next();
@@ -53,6 +54,10 @@ public class ReadingExcelService {
                         case FORMULA:
                             System.out.print(currentCell.getCellFormula() + " | ");
                             break;
+
+                        case BLANK:
+                            System.out.print(" | ");
+                            break;
                     
                         default:
                             System.out.print(currentCell.getStringCellValue() + " | ");
@@ -61,7 +66,13 @@ public class ReadingExcelService {
 
                 }
 
-                System.out.println(" ");
+                row++;
+
+                if (row <= datatypeSheet.getLastRowNum()) {
+                    System.out.println(" ");
+                } else {
+                    break;
+                }
 
             }
 

@@ -2,17 +2,11 @@ package net.suyudi.apachepoi.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
+import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -48,15 +42,32 @@ public class AuthorController {
     @Autowired
     private WritingExcelService writingExcelService;
 
+    @PostMapping("/import/stream")
+    public String uploadFileStream(@RequestParam("file") MultipartFile file) {
+        try {
+            readingExcelService.GetData(file.getInputStream());
+        } catch (Exception e) {
+            return "Failed";
+        }
+
+        return "Success";
+    }
+
     @PostMapping("/import")
     public String uploadFile(@RequestParam("file") MultipartFile file) {
         fileStorageService.storeFile(file);
 
         String filePath = fileStorageService.loadFileAsResource(file.getOriginalFilename()).toString();
 
-        readingExcelService.GetData(filePath);
+        try {
+            InputStream pathStream = new FileInputStream(new File(filePath));
 
-        return "location path " + filePath;
+            readingExcelService.GetData(pathStream);
+        } catch (Exception e) {
+            return "Failed: File path " + filePath;
+        }
+
+        return "Success: File path " + filePath;
     }
     
     @GetMapping("/export/{file}")

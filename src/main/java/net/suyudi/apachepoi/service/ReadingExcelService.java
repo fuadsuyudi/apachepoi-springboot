@@ -1,9 +1,8 @@
 package net.suyudi.apachepoi.service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,13 +18,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReadingExcelService {
 
-    public String GetData(String filePath) {
-
-        System.out.println(filePath);
+    public String GetData(InputStream excelFile) {
 
         try {
 
-            FileInputStream excelFile = new FileInputStream(new File(filePath));
             Workbook workbook = new XSSFWorkbook(excelFile);
             Sheet datatypeSheet = workbook.getSheetAt(0);
             Iterator<Row> iterator = datatypeSheet.iterator();
